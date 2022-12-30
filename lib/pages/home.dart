@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -13,9 +15,27 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+void _fetchWeekDays() async {
+  var response = await http.get(
+    Uri.parse('http://10.0.2.2:8080/menu'),
+  );
+  var data = json.decode(response.body);
+
+  var rest = data as LinkedHashMap<String, dynamic>;
+
+  List<WeekDay> weekDays = [];
+
+  rest.forEach((key, value) {
+    weekDays.add(WeekDay.fromJson(value["original"]));
+  });
+
+  print(weekDays[0].desert);
+}
+
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    _fetchWeekDays();
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: ListView.builder(
