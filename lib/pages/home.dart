@@ -51,7 +51,11 @@ class _HomePageState extends State<HomePage> {
               builder: (BuildContext context,
                   AsyncSnapshot<List<WeekDay>> snapshot) {
                 if (snapshot.hasData) {
-                  return day(snapshot.data![index], context);
+                  return GestureDetector(
+                    child: day(snapshot.data![index], context),
+                    onTap: () =>
+                        print("TAPPED!!! ${snapshot.data![index].weekDay}"),
+                  );
                 } else if (snapshot.hasError) {
                   return const Text('Oops, something happened');
                 } else {
