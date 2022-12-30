@@ -27,4 +27,14 @@ class WeekDay {
         desert: json["desert"],
         img: json["img"]);
   }
+
+  Map<String, dynamic> toJson() => {
+        "weekDay": weekDay,
+        "soup": soup,
+        "fish": fish,
+        "meat": meat,
+        "vegetarian": vegetarian,
+        "desert": desert,
+        "img": img,
+      };
 }

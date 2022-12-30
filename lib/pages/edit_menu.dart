@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:week_menu/model/week_day.dart';
 import 'package:week_menu/widgets/day_edit.dart';
+import 'package:http/http.dart' as http;
 
 class EditMenu extends StatefulWidget {
   const EditMenu({super.key, required this.weekDay});
@@ -17,7 +18,11 @@ class _EditMenuState extends State<EditMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("TODO ALTERAR")),
-      body: dayEdit(widget.weekDay, context),
+      body: Column(
+        children: [
+          dayEdit(widget.weekDay, context),
+        ],
+      ),
     );
   }
 }
