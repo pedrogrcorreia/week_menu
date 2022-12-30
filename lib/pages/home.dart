@@ -62,6 +62,13 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {});
+        },
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.navigation),
+      ),
     );
   }
 }
