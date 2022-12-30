@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:week_menu/model/week_day.dart';
+import 'package:week_menu/pages/edit_menu.dart';
 import 'dart:convert';
 
 import 'package:week_menu/widgets/day.dart';
@@ -52,10 +53,14 @@ class _HomePageState extends State<HomePage> {
                   AsyncSnapshot<List<WeekDay>> snapshot) {
                 if (snapshot.hasData) {
                   return GestureDetector(
-                    child: day(snapshot.data![index], context),
-                    onTap: () =>
-                        print("TAPPED!!! ${snapshot.data![index].weekDay}"),
-                  );
+                      child: day(snapshot.data![index], context),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditMenu(weekDay: snapshot.data![index])));
+                      });
                 } else if (snapshot.hasError) {
                   return const Text('Oops, something happened');
                 } else {
