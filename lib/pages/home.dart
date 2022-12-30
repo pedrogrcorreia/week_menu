@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:week_menu/model/week_day.dart';
 import 'dart:convert';
 
+import 'package:week_menu/widgets/day.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
 
@@ -15,11 +17,11 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-void _fetchWeekDays() async {
+Future<List<WeekDay>> _fetchWeekDays() async {
   var response = await http.get(
     Uri.parse('http://10.0.2.2:8080/menu'),
   );
-  var data = json.decode(response.body);
+  var data = json.decode(utf8.decode(response.bodyBytes));
 
   var rest = data as LinkedHashMap<String, dynamic>;
 
@@ -29,13 +31,12 @@ void _fetchWeekDays() async {
     weekDays.add(WeekDay.fromJson(value["original"]));
   });
 
-  print(weekDays[0].desert);
+  return weekDays;
 }
 
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    _fetchWeekDays();
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: ListView.builder(
@@ -45,20 +46,18 @@ class _HomePageState extends State<HomePage> {
           return SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            child: Center(
-              child: FutureBuilder<http.Response>(
-                future: http.get(Uri.parse('http://10.0.2.2:8080/menu')),
-                builder: (BuildContext context,
-                    AsyncSnapshot<http.Response> snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(snapshot.data!.body);
-                  } else if (snapshot.hasError) {
-                    return const Text('Oops, something happened');
-                  } else {
-                    return const CircularProgressIndicator();
-                  }
-                },
-              ),
+            child: FutureBuilder<List<WeekDay>>(
+              future: _fetchWeekDays(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<WeekDay>> snapshot) {
+                if (snapshot.hasData) {
+                  return day(snapshot.data![index], context);
+                } else if (snapshot.hasError) {
+                  return const Text('Oops, something happened');
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
             ),
           );
         },
