@@ -6,20 +6,25 @@ import 'package:week_menu/model/week_day.dart';
 import 'package:http/http.dart' as http;
 
 void updateWeekDay(WeekDay weekDay) {
-  http.post(Uri.parse('http://10.0.2.2:8080/menu'),
+  var response = http.post(Uri.parse('http://10.0.2.2:8080/menu'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(weekDay.toJson()));
+      body: jsonEncode(weekDay.update?.toJson()));
 }
 
-Widget dayEdit(WeekDay weekDay, Menu menu, BuildContext context) {
-  TextEditingController soupEdit = TextEditingController(text: menu.soup);
-  TextEditingController meatEdit = TextEditingController(text: menu.meat);
-  TextEditingController fishEdit = TextEditingController(text: menu.fish);
+Widget dayEdit(
+    WeekDay weekDay, Menu menu, Menu? menuUpdate, BuildContext context) {
+  TextEditingController soupEdit =
+      TextEditingController(text: menuUpdate?.soup ?? menu.soup);
+  TextEditingController meatEdit =
+      TextEditingController(text: menuUpdate?.meat ?? menu.meat);
+  TextEditingController fishEdit =
+      TextEditingController(text: menuUpdate?.fish ?? menu.fish);
   TextEditingController vegetarianEdit =
-      TextEditingController(text: menu.vegetarian);
-  TextEditingController desertEdit = TextEditingController(text: menu.desert);
+      TextEditingController(text: menuUpdate?.vegetarian ?? menu.vegetarian);
+  TextEditingController desertEdit =
+      TextEditingController(text: menuUpdate?.desert ?? menu.desert);
   return SingleChildScrollView(
     child: Center(
       child: Column(
@@ -27,29 +32,46 @@ Widget dayEdit(WeekDay weekDay, Menu menu, BuildContext context) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(weekDay.weekDay),
+          Text(menu.soup),
           TextField(
             controller: soupEdit,
           ),
+          Text(menu.meat),
           TextField(
             controller: meatEdit,
           ),
+          Text(menu.fish),
           TextField(
             controller: fishEdit,
           ),
+          Text(menu.vegetarian),
           TextField(
             controller: vegetarianEdit,
           ),
+          Text(menu.desert),
           TextField(controller: desertEdit),
           ElevatedButton(
             onPressed: () {
-              // var newWeekDay = WeekDay(
-              //     weekDay: weekDay.weekDay,
-              //     soup: soupEdit.text,
-              //     meat: meatEdit.text,
-              //     fish: fishEdit.text,
-              //     vegetarian: vegetarianEdit.text,
-              //     desert: desertEdit.text);
-              // updateWeekDay(newWeekDay);
+              soupEdit.text = menu.soup;
+              meatEdit.text = menu.meat;
+              fishEdit.text = menu.fish;
+              vegetarianEdit.text = menu.vegetarian;
+              desertEdit.text = menu.desert;
+            },
+            child: Text("replace original"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              var newMenu = Menu(
+                  weekDay: menu.weekDay,
+                  soup: soupEdit.text,
+                  meat: meatEdit.text,
+                  fish: fishEdit.text,
+                  vegetarian: vegetarianEdit.text,
+                  desert: desertEdit.text);
+              var newWeekDay = WeekDay(
+                  weekDay: menu.weekDay, original: menu, update: newMenu);
+              updateWeekDay(newWeekDay);
             },
             child: Text("Update"),
           ),

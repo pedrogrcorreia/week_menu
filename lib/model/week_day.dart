@@ -22,6 +22,6 @@ class WeekDay {
   Map<String, dynamic> toJson() => {
         "weekDay": weekDay,
         "original": original.toJson(),
-        "update": update?.toJson() ?? 'null',
+        "update": update == null ? null : update?.toJson(),
       };
 }
