@@ -20,7 +20,7 @@ class _EditMenuState extends State<EditMenu> {
       appBar: AppBar(title: Text("TODO ALTERAR")),
       body: Column(
         children: [
-          dayEdit(widget.weekDay, context),
+          dayEdit(widget.weekDay, widget.weekDay.original, context),
         ],
       ),
     );

@@ -29,13 +29,21 @@ Future<List<WeekDay>> _fetchWeekDays() async {
   List<WeekDay> weekDays = [];
 
   rest.forEach((key, value) {
-    weekDays.add(WeekDay.fromJson(value["original"]));
+    weekDays.add(WeekDay.fromJson(value));
   });
 
+  print(weekDays);
   return weekDays;
 }
 
 class _HomePageState extends State<HomePage> {
+  var backgroundColor = Colors.white;
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +61,11 @@ class _HomePageState extends State<HomePage> {
                   AsyncSnapshot<List<WeekDay>> snapshot) {
                 if (snapshot.hasData) {
                   return GestureDetector(
-                      child: day(snapshot.data![index], context),
+                      child: day(
+                          snapshot.data![index],
+                          snapshot.data![index].update ??
+                              snapshot.data![index].original,
+                          context),
                       onTap: () {
                         Navigator.push(
                             context,
@@ -62,6 +74,7 @@ class _HomePageState extends State<HomePage> {
                                     EditMenu(weekDay: snapshot.data![index])));
                       });
                 } else if (snapshot.hasError) {
+                  print(snapshot.error);
                   return const Text('Oops, something happened');
                 } else {
                   return const CircularProgressIndicator();
