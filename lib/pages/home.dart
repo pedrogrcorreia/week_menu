@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:week_menu/model/week_day.dart';
 import 'package:week_menu/pages/edit_menu.dart';
 import 'dart:convert';
@@ -32,7 +33,21 @@ Future<List<WeekDay>> _fetchWeekDays() async {
     weekDays.add(WeekDay.fromJson(value));
   });
 
-  print(weekDays);
+  var today = DateFormat('EEEE').format(DateTime.now());
+  var todayIndex = 0;
+
+  for (var i = 0; i < weekDays.length; i++) {
+    if (weekDays[i].weekDay == today.toUpperCase()) {
+      todayIndex = i;
+    }
+  }
+
+  var removedDays = weekDays.getRange(0, 2);
+
+  weekDays.addAll(removedDays);
+
+  weekDays.removeRange(0, todayIndex);
+
   return weekDays;
 }
 
