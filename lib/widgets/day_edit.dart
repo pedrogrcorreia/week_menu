@@ -5,12 +5,13 @@ import 'package:week_menu/model/menu.dart';
 import 'package:week_menu/model/week_day.dart';
 import 'package:http/http.dart' as http;
 
-void updateWeekDay(WeekDay weekDay) {
+Future<http.Response> updateWeekDay(WeekDay weekDay) {
   var response = http.post(Uri.parse('http://10.0.2.2:8080/menu'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(weekDay.update?.toJson()));
+  return response;
 }
 
 Widget dayEdit(
@@ -61,7 +62,7 @@ Widget dayEdit(
             child: Text("replace original"),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               var newMenu = Menu(
                   weekDay: menu.weekDay,
                   soup: soupEdit.text,
@@ -71,7 +72,8 @@ Widget dayEdit(
                   desert: desertEdit.text);
               var newWeekDay = WeekDay(
                   weekDay: menu.weekDay, original: menu, update: newMenu);
-              updateWeekDay(newWeekDay);
+              await updateWeekDay(newWeekDay);
+              Navigator.pop(context);
             },
             child: Text("Update"),
           ),

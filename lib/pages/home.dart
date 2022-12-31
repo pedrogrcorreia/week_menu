@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 Future<List<WeekDay>> _fetchWeekDays() async {
+  print("Getting data from server");
   var response = await http.get(
     Uri.parse('http://10.0.2.2:8080/menu'),
   );
@@ -48,16 +49,15 @@ Future<List<WeekDay>> _fetchWeekDays() async {
 
   weekDays.removeRange(0, todayIndex);
 
+  weekDays.forEach((element) {
+    print(element.update?.desert);
+  });
+
   return weekDays;
 }
 
 class _HomePageState extends State<HomePage> {
   var backgroundColor = Colors.white;
-
-  @override
-  void setState(VoidCallback fn) {
-    super.setState(fn);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,12 +81,13 @@ class _HomePageState extends State<HomePage> {
                           snapshot.data![index].update ??
                               snapshot.data![index].original,
                           context),
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
                                     EditMenu(weekDay: snapshot.data![index])));
+                        setState(() {});
                       });
                 } else if (snapshot.hasError) {
                   print(snapshot.error);
