@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:week_menu/model/menu.dart';
 import 'package:week_menu/model/week_day.dart';
 import 'package:http/http.dart' as http;
+import 'package:week_menu/pages/camera_page.dart';
 
 Future<http.Response> updateWeekDay(WeekDay weekDay) {
   var response = http.post(Uri.parse('http://10.0.2.2:8080/menu'),
@@ -76,6 +78,15 @@ Widget dayEdit(
               Navigator.pop(context);
             },
             child: Text("Update"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await availableCameras().then((value) => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => CameraPage(cameras: value))));
+            },
+            child: const Text("Take a Picture"),
           ),
         ],
       ),
