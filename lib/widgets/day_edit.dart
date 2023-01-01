@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ Future<http.Response> updateWeekDay(WeekDay weekDay) {
 
 Widget dayEdit(
     WeekDay weekDay, Menu menu, Menu? menuUpdate, BuildContext context) {
+  XFile? image;
   TextEditingController soupEdit =
       TextEditingController(text: menuUpdate?.soup ?? menu.soup);
   TextEditingController meatEdit =
@@ -78,15 +80,6 @@ Widget dayEdit(
               Navigator.pop(context);
             },
             child: Text("Update"),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await availableCameras().then((value) => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => CameraPage(cameras: value))));
-            },
-            child: const Text("Take a Picture"),
           ),
         ],
       ),
