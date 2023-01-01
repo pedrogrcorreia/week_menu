@@ -95,11 +95,14 @@ class _HomePageState extends State<HomePage> {
                                         child:
                                             snapshot.data![index].update?.img ==
                                                     null
-                                                ? SizedBox(
-                                                    width: 56,
-                                                    height: 56,
-                                                    child: Image.asset(
-                                                        "assets/images/no_image.jpeg"),
+                                                ? Hero(
+                                                    tag: "photo",
+                                                    child: SizedBox(
+                                                      width: 56,
+                                                      height: 56,
+                                                      child: Image.asset(
+                                                          "assets/images/no_image.jpeg"),
+                                                    ),
                                                   )
                                                 : SizedBox(
                                                     width: 56,
@@ -107,8 +110,23 @@ class _HomePageState extends State<HomePage> {
                                                     child: Image.network(
                                                         "http://192.168.1.86:8080/images/${snapshot.data![index].update!.img!}"),
                                                   ),
-                                        onTap:
-                                            () {}, // TODO Abrir aqui a imagem
+                                        onTap: () async {
+                                          if (snapshot
+                                                  .data![index].update?.img !=
+                                              null) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PreviewPage(
+                                                          picture:
+                                                              "http://192.168.1.86:8080/images/${snapshot.data![index].update!.img!}",
+                                                          title: snapshot
+                                                              .data![index]
+                                                              .weekDay,
+                                                        )));
+                                          }
+                                        }, // TODO Abrir aqui a imagem
                                       )
                                     ],
                                   ),
