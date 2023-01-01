@@ -33,13 +33,13 @@ class _EditMenuState extends State<EditMenu> {
             ElevatedButton(
               onPressed: () async {
                 final cameras = await availableCameras();
-                final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => CameraPage(cameras: cameras)));
-                setState(() {
-                  image = result;
-                });
+                if (mounted) {
+                  image = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => CameraPage(cameras: cameras)));
+                }
+                setState(() {});
               },
               child: const Text("Take a Picture"),
             ),

@@ -38,6 +38,7 @@ class _CameraPageState extends State<CameraPage> {
     try {
       await _cameraController.setFlashMode(FlashMode.off);
       XFile picture = await _cameraController.takePicture();
+      if (!mounted) return;
       Navigator.pop(context, picture);
     } on CameraException catch (e) {
       debugPrint('Error occured while taking picture: $e');
