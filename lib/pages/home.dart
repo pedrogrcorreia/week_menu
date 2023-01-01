@@ -92,8 +92,21 @@ class _HomePageState extends State<HomePage> {
                                         style: TextStyle(color: textColor),
                                       ),
                                       GestureDetector(
-                                        child: Image.asset(
-                                            "assets/images/Sopa.jpg"),
+                                        child:
+                                            snapshot.data![index].update?.img ==
+                                                    null
+                                                ? SizedBox(
+                                                    width: 56,
+                                                    height: 56,
+                                                    child: Image.asset(
+                                                        "assets/images/no_image.jpeg"),
+                                                  )
+                                                : SizedBox(
+                                                    width: 56,
+                                                    height: 56,
+                                                    child: Image.network(
+                                                        "http://192.168.1.86:8080/images/${snapshot.data![index].update!.img!}"),
+                                                  ),
                                         onTap:
                                             () {}, // TODO Abrir aqui a imagem
                                       )
