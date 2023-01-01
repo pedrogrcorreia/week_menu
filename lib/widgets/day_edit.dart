@@ -17,8 +17,8 @@ Future<http.Response> updateWeekDay(WeekDay weekDay) {
   return response;
 }
 
-Widget dayEdit(
-    WeekDay weekDay, Menu menu, Menu? menuUpdate, BuildContext context) {
+Widget dayEdit(WeekDay weekDay, Menu menu, Menu? menuUpdate,
+    BuildContext context, Function setState) {
   XFile? image;
   TextEditingController soupEdit =
       TextEditingController(text: menuUpdate?.soup ?? menu.soup);

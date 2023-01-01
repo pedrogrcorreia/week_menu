@@ -29,7 +29,7 @@ class _EditMenuState extends State<EditMenu> {
         child: Column(
           children: [
             dayEdit(widget.weekDay, widget.weekDay.original,
-                widget.weekDay.update, context),
+                widget.weekDay.update, context, setState),
             ElevatedButton(
               onPressed: () async {
                 final cameras = await availableCameras();
