@@ -22,8 +22,9 @@ class HomePage extends StatefulWidget {
 Future<List<WeekDay>> _fetchWeekDays() async {
   print("Getting data from server");
   var response = await http.get(
-    Uri.parse('http://10.0.2.2:8080/menu'),
+    Uri.parse('http://192.168.1.86:8080/menu'),
   );
+  print(response.statusCode);
   var data = json.decode(utf8.decode(response.bodyBytes));
 
   var rest = data as LinkedHashMap<String, dynamic>;
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                         setState(() {});
                       });
                 } else if (snapshot.hasError) {
-                  print(snapshot.error);
+                  print("Snapshot error ${snapshot.error}");
                   return const Text('Oops, something happened');
                 } else {
                   return const CircularProgressIndicator();
