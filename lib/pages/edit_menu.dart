@@ -29,13 +29,16 @@ class _EditMenuState extends State<EditMenu> {
   late TextEditingController fishEdit;
   late TextEditingController vegetarianEdit;
   late TextEditingController desertEdit;
-  late Menu menu;
+  late Menu menuOriginal;
   late Menu? menuUpdate;
+
+  late Menu menu;
 
   @override
   void initState() {
-    menu = widget.weekDay.original;
+    menuOriginal = widget.weekDay.original;
     menuUpdate = widget.weekDay.update;
+    menu = menuUpdate != null ? menuUpdate! : menuOriginal;
     soupEdit = TextEditingController(text: menuUpdate?.soup ?? menu.soup);
     meatEdit = TextEditingController(text: menuUpdate?.meat ?? menu.meat);
     fishEdit = TextEditingController(text: menuUpdate?.fish ?? menu.fish);
@@ -46,31 +49,27 @@ class _EditMenuState extends State<EditMenu> {
   }
 
   @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.weekDay.weekDay)),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Text(widget.weekDay.weekDay),
-            Text(menu.soup),
-            TextField(
-              controller: soupEdit,
-            ),
-            Text(menu.meat),
-            TextField(
-              controller: meatEdit,
-            ),
-            Text(menu.fish),
-            TextField(
-              controller: fishEdit,
-            ),
-            Text(menu.vegetarian),
-            TextField(
-              controller: vegetarianEdit,
-            ),
-            Text(menu.desert),
-            TextField(controller: desertEdit),
+            _menuRow("Sopa", menuOriginal.soup, menuUpdate?.soup, Colors.black,
+                soupEdit),
+            _menuRow("Carne", menuOriginal.meat, menuUpdate?.meat, Colors.black,
+                meatEdit),
+            _menuRow("Peixe", menuOriginal.fish, menuUpdate?.fish, Colors.black,
+                fishEdit),
+            _menuRow("Vegetariano", menuOriginal.vegetarian,
+                menuUpdate?.vegetarian, Colors.black, vegetarianEdit),
+            _menuRow("Sobremesa", menuOriginal.desert, menuUpdate?.desert,
+                Colors.black, desertEdit),
             ElevatedButton(
               onPressed: () {
                 soupEdit.text = menu.soup;
@@ -91,12 +90,20 @@ class _EditMenuState extends State<EditMenu> {
                     vegetarian: vegetarianEdit.text,
                     desert: desertEdit.text,
                     img: image64 ?? null);
+                if (newMenu == menuOriginal || newMenu == menuUpdate) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Não fez alterações ao menu!"),
+                    ),
+                  );
+                  return;
+                }
                 var newWeekDay = WeekDay(
                     weekDay: menu.weekDay, original: menu, update: newMenu);
                 await updateWeekDay(newWeekDay);
                 Navigator.pop(context);
               },
-              child: Text("Update"),
+              child: const Text("Atualizar"),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -119,6 +126,85 @@ class _EditMenuState extends State<EditMenu> {
               Image.file(File(image!.path), fit: BoxFit.cover, width: 250),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _menuRow(
+    String title,
+    String itemOriginal,
+    String? itemUpdate,
+    Color color,
+    TextEditingController controller,
+  ) {
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            leading: Image.asset("assets/images/$title.jpg"),
+            title: Text(itemOriginal),
+            subtitle: Text(title),
+            trailing: IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                        title: Text("Editar $title"),
+                        content: Column(
+                          children: [
+                            TextField(
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              controller: controller,
+                            ),
+                            Row(
+                              children: [
+                                ElevatedButton(
+                                    onPressed: () {
+                                      menuUpdate = Menu(
+                                          weekDay: menu.weekDay,
+                                          soup:
+                                              soupEdit.text == menuOriginal.soup
+                                                  ? menuOriginal.soup
+                                                  : soupEdit.text,
+                                          meat:
+                                              meatEdit.text == menuOriginal.meat
+                                                  ? menuOriginal.meat
+                                                  : meatEdit.text,
+                                          fish:
+                                              fishEdit.text == menuOriginal.fish
+                                                  ? menuOriginal.fish
+                                                  : fishEdit.text,
+                                          vegetarian: vegetarianEdit.text ==
+                                                  menuOriginal.vegetarian
+                                              ? menuOriginal.vegetarian
+                                              : vegetarianEdit.text,
+                                          desert: desertEdit.text ==
+                                                  menuOriginal.desert
+                                              ? menuOriginal.desert
+                                              : desertEdit.text);
+                                      setState(() {});
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: Text("Ok")),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: Text("Cancelar")),
+                              ],
+                            ),
+                          ],
+                        ));
+                  },
+                );
+              },
+            ),
+          ),
+          ListTile(leading: Image.asset("assets/images/$title.jpg"))
+        ],
       ),
     );
   }

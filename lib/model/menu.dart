@@ -17,6 +17,17 @@ class Menu {
     this.img,
   });
 
+  @override
+  bool operator ==(Object other) {
+    return other is Menu &&
+        this.weekDay == other.weekDay &&
+        this.soup == other.soup &&
+        this.fish == other.fish &&
+        this.meat == other.meat &&
+        this.vegetarian == other.vegetarian &&
+        this.desert == other.desert;
+  }
+
   factory Menu.fromJson(Map<String, dynamic> json) {
     return Menu(
         weekDay: json["weekDay"],
