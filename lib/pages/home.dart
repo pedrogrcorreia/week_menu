@@ -83,52 +83,65 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        snapshot.data![index].weekDay,
-                                        style: TextStyle(color: textColor),
-                                      ),
-                                      GestureDetector(
-                                        child:
-                                            snapshot.data![index].update?.img ==
-                                                    null
-                                                ? Hero(
-                                                    tag: "photo",
-                                                    child: SizedBox(
-                                                      width: 56,
-                                                      height: 56,
-                                                      child: Image.asset(
-                                                          "assets/images/no_image.jpeg"),
-                                                    ),
-                                                  )
-                                                : SizedBox(
-                                                    width: 56,
-                                                    height: 56,
-                                                    child: Image.network(
-                                                        "http://192.168.1.86:8080/images/${snapshot.data![index].update!.img!}"),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width -
+                                        (MediaQuery.of(context).size.width / 3),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          snapshot.data![index].weekDay,
+                                          style: TextStyle(
+                                              color: textColor, fontSize: 25),
+                                        ),
+                                        GestureDetector(
+                                          child: snapshot.data![index].update
+                                                      ?.img ==
+                                                  null
+                                              ? const Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: SizedBox(
+                                                    width: 100,
+                                                    height: 150,
                                                   ),
-                                        onTap: () async {
-                                          if (snapshot
-                                                  .data![index].update?.img !=
-                                              null) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PreviewPage(
-                                                          picture:
-                                                              "http://192.168.1.86:8080/images/${snapshot.data![index].update!.img!}",
-                                                          title: snapshot
-                                                              .data![index]
-                                                              .weekDay,
-                                                        )));
-                                          }
-                                        }, // TODO Abrir aqui a imagem
-                                      )
-                                    ],
+                                                )
+                                              : Hero(
+                                                  tag: "photo",
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Image.network(
+                                                      "http://192.168.1.86:8080/images/${snapshot.data![index].update!.img!}",
+                                                      fit: BoxFit.fitWidth,
+                                                      width: 100,
+                                                      height: 150,
+                                                    ),
+                                                  ),
+                                                ),
+                                          onTap: () async {
+                                            if (snapshot
+                                                    .data![index].update?.img !=
+                                                null) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PreviewPage(
+                                                            picture:
+                                                                "http://192.168.1.86:8080/images/${snapshot.data![index].update!.img!}",
+                                                            title: snapshot
+                                                                .data![index]
+                                                                .weekDay,
+                                                          )));
+                                            }
+                                          }, // TODO Abrir aqui a imagem
+                                        )
+                                      ],
+                                    ),
                                   ),
                                   _menuRow(
                                       "Sopa",
@@ -198,7 +211,10 @@ class _HomePageState extends State<HomePage> {
         children: [
           ListTile(
             leading: Image.asset("assets/images/$title.jpg"),
-            title: Text(item),
+            title: Text(
+              item,
+              style: TextStyle(color: color),
+            ),
             subtitle: Text(title),
           )
         ],
