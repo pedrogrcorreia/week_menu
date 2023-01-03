@@ -139,71 +139,91 @@ class _EditMenuState extends State<EditMenu> {
   ) {
     return Card(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ListTile(
             leading: Image.asset("assets/images/$title.jpg"),
-            title: Text(itemOriginal),
+            title: Column(children: [
+              Card(
+                child: ListTile(
+                  title: Text(itemOriginal),
+                  subtitle: Text("Original"),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                              title: Text("Editar $title"),
+                              content: Column(
+                                children: [
+                                  TextField(
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: null,
+                                    controller: controller,
+                                  ),
+                                  Row(
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            menuUpdate = Menu(
+                                                weekDay: menu.weekDay,
+                                                soup: soupEdit.text ==
+                                                        menuOriginal.soup
+                                                    ? menuOriginal.soup
+                                                    : soupEdit.text,
+                                                meat: meatEdit.text ==
+                                                        menuOriginal.meat
+                                                    ? menuOriginal.meat
+                                                    : meatEdit.text,
+                                                fish: fishEdit.text ==
+                                                        menuOriginal.fish
+                                                    ? menuOriginal.fish
+                                                    : fishEdit.text,
+                                                vegetarian: vegetarianEdit
+                                                            .text ==
+                                                        menuOriginal.vegetarian
+                                                    ? menuOriginal.vegetarian
+                                                    : vegetarianEdit.text,
+                                                desert: desertEdit.text ==
+                                                        menuOriginal.desert
+                                                    ? menuOriginal.desert
+                                                    : desertEdit.text);
+                                            setState(() {});
+                                            Navigator.pop(context, true);
+                                          },
+                                          child: Text("Ok")),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, true);
+                                          },
+                                          child: Text("Cancelar")),
+                                    ],
+                                  ),
+                                ],
+                              ));
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Card(
+                color: Colors.greenAccent,
+                child: ListTile(
+                  title: Text(itemUpdate ?? "Sem alterações"),
+                  subtitle: Text("Update"),
+                  trailing: IconButton(
+                    icon: Icon(Icons.refresh),
+                    onPressed: () {},
+                  ),
+                ),
+              ),
+            ]),
             subtitle: Text(title),
-            trailing: IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                        title: Text("Editar $title"),
-                        content: Column(
-                          children: [
-                            TextField(
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              controller: controller,
-                            ),
-                            Row(
-                              children: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      menuUpdate = Menu(
-                                          weekDay: menu.weekDay,
-                                          soup:
-                                              soupEdit.text == menuOriginal.soup
-                                                  ? menuOriginal.soup
-                                                  : soupEdit.text,
-                                          meat:
-                                              meatEdit.text == menuOriginal.meat
-                                                  ? menuOriginal.meat
-                                                  : meatEdit.text,
-                                          fish:
-                                              fishEdit.text == menuOriginal.fish
-                                                  ? menuOriginal.fish
-                                                  : fishEdit.text,
-                                          vegetarian: vegetarianEdit.text ==
-                                                  menuOriginal.vegetarian
-                                              ? menuOriginal.vegetarian
-                                              : vegetarianEdit.text,
-                                          desert: desertEdit.text ==
-                                                  menuOriginal.desert
-                                              ? menuOriginal.desert
-                                              : desertEdit.text);
-                                      setState(() {});
-                                      Navigator.pop(context, true);
-                                    },
-                                    child: Text("Ok")),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context, true);
-                                    },
-                                    child: Text("Cancelar")),
-                              ],
-                            ),
-                          ],
-                        ));
-                  },
-                );
-              },
-            ),
-          ),
-          ListTile(leading: Image.asset("assets/images/$title.jpg"))
+          )
         ],
       ),
     );
