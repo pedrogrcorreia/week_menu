@@ -42,10 +42,11 @@ Future<List<WeekDay>> _fetchWeekDays() async {
   for (var i = 0; i < weekDays.length; i++) {
     if (weekDays[i].weekDay == today.toUpperCase()) {
       todayIndex = i;
+      print(todayIndex);
     }
   }
 
-  var removedDays = weekDays.getRange(0, 2);
+  var removedDays = weekDays.getRange(0, todayIndex);
 
   weekDays.addAll(removedDays);
 
