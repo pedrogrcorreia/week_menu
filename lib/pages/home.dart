@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:week_menu/model/week_day.dart';
 import 'package:week_menu/pages/edit_menu.dart';
 import 'package:week_menu/pages/preview_page.dart';
@@ -22,40 +23,60 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-Future<List<WeekDay>> _fetchWeekDays() async {
-  var response = await http.get(
-    Uri.parse('http://192.168.1.86:8080/menu'),
-  );
-  var data = json.decode(utf8.decode(response.bodyBytes));
-
-  var rest = data as LinkedHashMap<String, dynamic>;
-
+class _HomePageState extends State<HomePage> {
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  late SharedPreferences prefs;
   List<WeekDay> weekDays = [];
 
-  rest.forEach((key, value) {
-    weekDays.add(WeekDay.fromJson(value));
-  });
+  Future<List<WeekDay>> _fetchWeekDays() async {
+    prefs = await _prefs;
+    var response = await http.get(
+      Uri.parse('http://192.168.1.86:8080/menu'),
+    );
+    var data = json.decode(utf8.decode(response.bodyBytes));
 
-  var today = DateFormat('EEEE').format(DateTime.now());
-  var todayIndex = 0;
+    var rest = data as LinkedHashMap<String, dynamic>;
 
-  for (var i = 0; i < weekDays.length; i++) {
-    if (weekDays[i].weekDay == today.toUpperCase()) {
-      todayIndex = i;
-      print(todayIndex);
+    rest.forEach((key, value) {
+      weekDays.add(WeekDay.fromJson(value));
+    });
+
+    var today = DateFormat('EEEE').format(DateTime.now());
+    var todayIndex = 0;
+
+    for (var i = 0; i < weekDays.length; i++) {
+      if (weekDays[i].weekDay == today.toUpperCase()) {
+        todayIndex = i;
+      }
     }
+
+    var removedDays = weekDays.getRange(0, todayIndex);
+
+    weekDays.addAll(removedDays);
+
+    weekDays.removeRange(0, todayIndex);
+    List<String> weekDaysJson = [];
+
+    weekDays.forEach((element) {
+      weekDaysJson.add(element.toJson().toString());
+    });
+
+    prefs.setStringList('weekDays', weekDaysJson);
+    print(prefs.getStringList('weekDays'));
+
+    return weekDays;
   }
 
-  var removedDays = weekDays.getRange(0, todayIndex);
+  @override
+  void initState() {
+    super.initState();
+  }
 
-  weekDays.addAll(removedDays);
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+  }
 
-  weekDays.removeRange(0, todayIndex);
-
-  return weekDays;
-}
-
-class _HomePageState extends State<HomePage> {
   var backgroundColor = Colors.white;
 
   @override
