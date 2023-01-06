@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:week_menu/model/week_day.dart';
 import 'package:week_menu/pages/edit_menu.dart';
@@ -113,6 +114,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     sharedWeekDays();
     _weekDays = _fetchWeekDaysShared();
+    checkPermissons();
   }
 
   void sharedWeekDays() async {
@@ -294,5 +296,29 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  void checkPermissons() async {
+    Location location = new Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
   }
 }
