@@ -9,6 +9,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:week_menu/model/menu.dart';
 import 'package:week_menu/model/week_day.dart';
 import 'package:week_menu/pages/camera_page.dart';
+import 'package:week_menu/utils/strings.dart';
 import 'package:week_menu/widgets/day_edit.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
@@ -38,6 +39,8 @@ class _EditMenuState extends State<EditMenu> {
 
   Menu? pastMenu;
 
+  bool _update = false;
+
   @override
   void initState() {
     menuOriginal = widget.weekDay.original;
@@ -61,7 +64,34 @@ class _EditMenuState extends State<EditMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.weekDay.weekDay)),
+      appBar: AppBar(
+        title: Text(
+          Strings.getWeekDay(widget.weekDay.weekDay),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final cameras = await availableCameras();
+              if (mounted) {
+                image = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => CameraPage(cameras: cameras)));
+              }
+              setState(() {
+                File file = File(image!.path);
+                image64 = base64Encode(file.readAsBytesSync());
+                menuUpdate = getUpdatedMenu();
+              });
+            },
+            icon: Icon(Icons.photo_camera),
+          ),
+          IconButton(
+            icon: Icon(Icons.check),
+            onPressed: () async => update(),
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -75,88 +105,6 @@ class _EditMenuState extends State<EditMenu> {
                 menuUpdate?.vegetarian, Colors.black, vegetarianEdit),
             _menuRow("Sobremesa", menuOriginal.desert, menuUpdate?.desert,
                 Colors.black, desertEdit),
-            ElevatedButton(
-              onPressed: () {
-                soupEdit.text = menu.soup;
-                meatEdit.text = menu.meat;
-                fishEdit.text = menu.fish;
-                vegetarianEdit.text = menu.vegetarian;
-                desertEdit.text = menu.desert;
-              },
-              child: Text("replace original"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                var newMenu = Menu(
-                    weekDay: menu.weekDay,
-                    soup: soupEdit.text,
-                    meat: meatEdit.text,
-                    fish: fishEdit.text,
-                    vegetarian: vegetarianEdit.text,
-                    desert: desertEdit.text,
-                    img: image64);
-                pastMenu?.img = null;
-                // 40.193067, -8.413346 cima
-                // 40.191699, -8.410406 baixo
-                var permissions = await Location().hasPermission();
-                if (permissions == PermissionStatus.denied) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          "Não conseguimos obter a sua localização, pelo que não pode efetuar alterações."),
-                    ),
-                  );
-                  return;
-                } else {
-                  var location = Location();
-                  location.changeSettings(accuracy: LocationAccuracy.high);
-                  var locationData = await location.getLocation();
-                  if (!(locationData.latitude! > 40.191699 &&
-                      locationData.latitude! < 40.193067 &&
-                      locationData.longitude! > -8.413346 &&
-                      locationData.longitude! < -8.410406)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                            "Não se encontra no isec, então não pode fazer atualizações!"),
-                      ),
-                    );
-                    return;
-                  }
-                }
-
-                if (newMenu == menuOriginal || pastMenu == menuUpdate) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Não fez alterações ao menu!"),
-                    ),
-                  );
-                  return;
-                }
-                var newWeekDay = WeekDay(
-                    weekDay: menu.weekDay, original: menu, update: newMenu);
-                await updateWeekDay(newWeekDay);
-                Navigator.pop(context);
-              },
-              child: const Text("Atualizar"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final cameras = await availableCameras();
-                if (mounted) {
-                  image = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => CameraPage(cameras: cameras)));
-                }
-                setState(() {
-                  File file = File(image!.path);
-                  image64 = base64Encode(file.readAsBytesSync());
-                  menuUpdate = getUpdatedMenu();
-                });
-              },
-              child: const Text("Take a Picture"),
-            ),
             if (image != null)
               Image.file(File(image!.path), fit: BoxFit.cover, width: 250),
           ],
@@ -230,7 +178,14 @@ class _EditMenuState extends State<EditMenu> {
                   subtitle: Text("Update"),
                   trailing: IconButton(
                     icon: Icon(Icons.refresh),
-                    onPressed: () {},
+                    onPressed: () {
+                      controller.text = itemOriginal;
+                      itemUpdate = controller.text;
+                      print(itemUpdate);
+                      setState(() {
+                        menuUpdate = getUpdatedMenu();
+                      });
+                    },
                   ),
                 ),
               ),
@@ -267,5 +222,58 @@ class _EditMenuState extends State<EditMenu> {
     Location location = new Location();
 
     return await location.getLocation();
+  }
+
+  void update() async {
+    var newMenu = Menu(
+        weekDay: menu.weekDay,
+        soup: soupEdit.text,
+        meat: meatEdit.text,
+        fish: fishEdit.text,
+        vegetarian: vegetarianEdit.text,
+        desert: desertEdit.text,
+        img: image64);
+    pastMenu?.img = null;
+    // 40.193067, -8.413346 cima
+    // 40.191699, -8.410406 baixo
+    var permissions = await Location().hasPermission();
+    if (permissions == PermissionStatus.denied) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              "Não conseguimos obter a sua localização, pelo que não pode efetuar alterações."),
+        ),
+      );
+      return;
+    } else {
+      var location = Location();
+      location.changeSettings(accuracy: LocationAccuracy.high);
+      var locationData = await location.getLocation();
+      if (!(locationData.latitude! > 40.191699 &&
+          locationData.latitude! < 40.193067 &&
+          locationData.longitude! > -8.413346 &&
+          locationData.longitude! < -8.410406)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                "Não se encontra no isec, então não pode fazer atualizações!"),
+          ),
+        );
+        return;
+      }
+    }
+
+    if (pastMenu == menuUpdate) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Não fez alterações ao menu!"),
+        ),
+      );
+      return;
+    }
+    var newWeekDay =
+        WeekDay(weekDay: menu.weekDay, original: menu, update: newMenu);
+    await updateWeekDay(newWeekDay);
+    Navigator.pop(context);
   }
 }

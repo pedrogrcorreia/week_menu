@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:week_menu/model/week_day.dart';
 import 'package:week_menu/pages/edit_menu.dart';
 import 'package:week_menu/pages/preview_page.dart';
+import 'package:week_menu/utils/strings.dart';
 import 'dart:convert';
 
 import 'package:week_menu/widgets/day.dart';
@@ -164,7 +165,8 @@ class _HomePageState extends State<HomePage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          snapshot.data![index].weekDay,
+                                          Strings.getWeekDay(
+                                              snapshot.data![index].weekDay),
                                           style: TextStyle(
                                               color: textColor, fontSize: 25),
                                         ),
