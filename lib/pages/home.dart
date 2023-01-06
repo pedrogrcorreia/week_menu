@@ -207,7 +207,7 @@ class _HomePageState extends State<HomePage> {
                                                                 .weekDay,
                                                           )));
                                             }
-                                          }, // TODO Abrir aqui a imagem
+                                          },
                                         )
                                       ],
                                     ),
@@ -248,7 +248,9 @@ class _HomePageState extends State<HomePage> {
                                   MaterialPageRoute(
                                       builder: (context) => EditMenu(
                                           weekDay: snapshot.data![index])));
-                              setState(() {});
+                              setState(() {
+                                _weekDays = _fetchWeekDays();
+                              });
                             });
                       } else if (snapshot.hasError) {
                         print("Snapshot error ${snapshot.error}");
