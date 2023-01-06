@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:week_menu/pages/camera_page.dart';
 
 Future<http.Response> updateWeekDay(WeekDay weekDay) {
-  var response = http.post(Uri.parse('http://10.0.2.2:8080/menu'),
+  var response = http.post(Uri.parse('http://192.168.1.86:8080/menu'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
