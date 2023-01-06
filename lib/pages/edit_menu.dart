@@ -34,10 +34,13 @@ class _EditMenuState extends State<EditMenu> {
 
   late Menu menu;
 
+  Menu? pastMenu;
+
   @override
   void initState() {
     menuOriginal = widget.weekDay.original;
     menuUpdate = widget.weekDay.update;
+    pastMenu = menuUpdate;
     menu = menuUpdate != null ? menuUpdate! : menuOriginal;
     soupEdit = TextEditingController(text: menuUpdate?.soup ?? menu.soup);
     meatEdit = TextEditingController(text: menuUpdate?.meat ?? menu.meat);
@@ -89,8 +92,9 @@ class _EditMenuState extends State<EditMenu> {
                     fish: fishEdit.text,
                     vegetarian: vegetarianEdit.text,
                     desert: desertEdit.text,
-                    img: image64 ?? null);
-                if (newMenu == menuOriginal) {
+                    img: image64);
+                pastMenu?.img = null;
+                if (newMenu == menuOriginal || pastMenu == menuUpdate) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text("Não fez alterações ao menu!"),
@@ -117,7 +121,7 @@ class _EditMenuState extends State<EditMenu> {
                 setState(() {
                   File file = File(image!.path);
                   image64 = base64Encode(file.readAsBytesSync());
-                  print(image64);
+                  menuUpdate = getUpdatedMenu();
                 });
               },
               child: const Text("Take a Picture"),
@@ -168,29 +172,7 @@ class _EditMenuState extends State<EditMenu> {
                                     children: [
                                       ElevatedButton(
                                           onPressed: () {
-                                            menuUpdate = Menu(
-                                                weekDay: menu.weekDay,
-                                                soup: soupEdit.text ==
-                                                        menuOriginal.soup
-                                                    ? menuOriginal.soup
-                                                    : soupEdit.text,
-                                                meat: meatEdit.text ==
-                                                        menuOriginal.meat
-                                                    ? menuOriginal.meat
-                                                    : meatEdit.text,
-                                                fish: fishEdit.text ==
-                                                        menuOriginal.fish
-                                                    ? menuOriginal.fish
-                                                    : fishEdit.text,
-                                                vegetarian: vegetarianEdit
-                                                            .text ==
-                                                        menuOriginal.vegetarian
-                                                    ? menuOriginal.vegetarian
-                                                    : vegetarianEdit.text,
-                                                desert: desertEdit.text ==
-                                                        menuOriginal.desert
-                                                    ? menuOriginal.desert
-                                                    : desertEdit.text);
+                                            menuUpdate = getUpdatedMenu();
                                             setState(() {});
                                             Navigator.pop(context, true);
                                           },
@@ -227,5 +209,26 @@ class _EditMenuState extends State<EditMenu> {
         ],
       ),
     );
+  }
+
+  Menu getUpdatedMenu() {
+    return Menu(
+        weekDay: menu.weekDay,
+        soup: soupEdit.text == menuOriginal.soup
+            ? menuOriginal.soup
+            : soupEdit.text,
+        meat: meatEdit.text == menuOriginal.meat
+            ? menuOriginal.meat
+            : meatEdit.text,
+        fish: fishEdit.text == menuOriginal.fish
+            ? menuOriginal.fish
+            : fishEdit.text,
+        vegetarian: vegetarianEdit.text == menuOriginal.vegetarian
+            ? menuOriginal.vegetarian
+            : vegetarianEdit.text,
+        desert: desertEdit.text == menuOriginal.desert
+            ? menuOriginal.desert
+            : desertEdit.text,
+        img: image64);
   }
 }

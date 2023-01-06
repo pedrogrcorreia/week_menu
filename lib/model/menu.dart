@@ -25,7 +25,8 @@ class Menu {
         this.fish == other.fish &&
         this.meat == other.meat &&
         this.vegetarian == other.vegetarian &&
-        this.desert == other.desert;
+        this.desert == other.desert &&
+        this.img == other.img;
   }
 
   factory Menu.fromJson(Map<String, dynamic> json) {
