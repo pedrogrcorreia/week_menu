@@ -17,7 +17,7 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   void dispose() {
-    _cameraController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -28,7 +28,8 @@ class _CameraPageState extends State<CameraPage> {
     // create a CameraController.
     _controller = CameraController(
       // Get a specific camera from the list of available cameras.
-      widget.cameras![0],
+      widget.cameras!.firstWhere(
+          (element) => element.lensDirection == CameraLensDirection.front),
       // Define the resolution to use.
       ResolutionPreset.medium,
     );
