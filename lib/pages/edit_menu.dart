@@ -90,7 +90,7 @@ class _EditMenuState extends State<EditMenu> {
                     vegetarian: vegetarianEdit.text,
                     desert: desertEdit.text,
                     img: image64 ?? null);
-                if (newMenu == menuOriginal || newMenu == menuUpdate) {
+                if (newMenu == menuOriginal) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text("Não fez alterações ao menu!"),
