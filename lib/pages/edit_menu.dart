@@ -254,22 +254,22 @@ class _EditMenuState extends State<EditMenu> {
         ),
       );
       return;
-      // } else {
-      //   var location = Location();
-      //   location.changeSettings(accuracy: LocationAccuracy.high);
-      //   var locationData = await location.getLocation();
-      //   if (!(locationData.latitude! > 40.191699 &&
-      //       locationData.latitude! < 40.193067 &&
-      //       locationData.longitude! > -8.413346 &&
-      //       locationData.longitude! < -8.410406)) {
-      //     ScaffoldMessenger.of(context).showSnackBar(
-      //       const SnackBar(
-      //         content: Text(
-      //             "Não se encontra no isec, então não pode fazer atualizações!"),
-      //       ),
-      //     );
-      //     return;
-      //   }
+    } else {
+      var location = Location();
+      location.changeSettings(accuracy: LocationAccuracy.high);
+      var locationData = await location.getLocation();
+      if (!(locationData.latitude! > 40.191699 &&
+          locationData.latitude! < 40.193067 &&
+          locationData.longitude! > -8.413346 &&
+          locationData.longitude! < -8.410406)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                "Não se encontra no isec, então não pode fazer atualizações!"),
+          ),
+        );
+        return;
+      }
     }
 
     if (pastMenu == menuUpdate) {
