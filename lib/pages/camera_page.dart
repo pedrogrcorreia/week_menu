@@ -24,12 +24,15 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
+    var camera = widget.cameras!.firstWhere(
+        (element) => element.lensDirection == CameraLensDirection.front,
+        orElse: () => widget.cameras![0]);
+
     // To display the current output from the Camera,
     // create a CameraController.
     _controller = CameraController(
       // Get a specific camera from the list of available cameras.
-      widget.cameras!.firstWhere(
-          (element) => element.lensDirection == CameraLensDirection.front),
+      camera,
       // Define the resolution to use.
       ResolutionPreset.medium,
     );

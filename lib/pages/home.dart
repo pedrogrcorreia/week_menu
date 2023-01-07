@@ -31,6 +31,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<WeekDay>>? _weekDays;
 
+  String apiUrl = 'http://10.0.2.2:8080';
+
   Future<List<WeekDay>> _getWeekDays() async {
     if (_weekDays == null) {
       _weekDays = _fetchWeekDaysShared();
@@ -72,11 +74,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<WeekDay>> _fetchWeekDays() async {
-    print("getting this list from the server!");
     List<WeekDay> weekDays = [];
     var response = await http.get(
-      Uri.parse('http://192.168.1.86:8080/menu'),
+      Uri.parse("$apiUrl/menu"),
     );
+
     var data = json.decode(utf8.decode(response.bodyBytes));
 
     var rest = data as LinkedHashMap<String, dynamic>;
@@ -164,54 +166,59 @@ class _HomePageState extends State<HomePage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          Strings.getWeekDay(
-                                              snapshot.data![index].weekDay),
-                                          style: TextStyle(
-                                              color: textColor, fontSize: 25),
+                                        Expanded(
+                                          child: Text(
+                                            Strings.getWeekDay(
+                                                snapshot.data![index].weekDay),
+                                            style: TextStyle(
+                                                color: textColor, fontSize: 25),
+                                          ),
                                         ),
-                                        GestureDetector(
-                                          child: snapshot.data![index].update
-                                                      ?.img ==
-                                                  null
-                                              ? const Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: SizedBox(
-                                                    width: 100,
-                                                    height: 150,
-                                                  ),
-                                                )
-                                              : Hero(
-                                                  tag: "photo",
-                                                  child: Padding(
+                                        Expanded(
+                                          child: GestureDetector(
+                                            child: snapshot.data![index].update
+                                                        ?.img ==
+                                                    null
+                                                ? const Padding(
                                                     padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Image.network(
-                                                      "http://192.168.1.86:8080/images/${snapshot.data![index].update!.img!}",
-                                                      fit: BoxFit.fitWidth,
+                                                        EdgeInsets.all(8.0),
+                                                    child: SizedBox(
                                                       width: 100,
                                                       height: 150,
                                                     ),
+                                                  )
+                                                : Hero(
+                                                    tag: "photo",
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Image.network(
+                                                        "$apiUrl/images/${snapshot.data![index].update!.img!}",
+                                                        fit: BoxFit.fitWidth,
+                                                        width: 100,
+                                                        height: 150,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                          onTap: () async {
-                                            if (snapshot
-                                                    .data![index].update?.img !=
-                                                null) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PreviewPage(
-                                                            picture:
-                                                                "http://192.168.1.86:8080/images/${snapshot.data![index].update!.img!}",
-                                                            title: snapshot
-                                                                .data![index]
-                                                                .weekDay,
-                                                          )));
-                                            }
-                                          },
+                                            onTap: () async {
+                                              if (snapshot.data![index].update
+                                                      ?.img !=
+                                                  null) {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PreviewPage(
+                                                              picture:
+                                                                  "$apiUrl/images/${snapshot.data![index].update!.img!}",
+                                                              title: snapshot
+                                                                  .data![index]
+                                                                  .weekDay,
+                                                            )));
+                                              }
+                                            },
+                                          ),
                                         )
                                       ],
                                     ),
@@ -251,7 +258,8 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => EditMenu(
-                                          weekDay: snapshot.data![index])));
+                                          weekDay: snapshot.data![index],
+                                          apiUrl: apiUrl)));
                               setState(() {
                                 _weekDays = _fetchWeekDays();
                               });

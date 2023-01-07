@@ -10,15 +10,14 @@ import 'package:week_menu/model/menu.dart';
 import 'package:week_menu/model/week_day.dart';
 import 'package:week_menu/pages/camera_page.dart';
 import 'package:week_menu/utils/strings.dart';
-import 'package:week_menu/widgets/day_edit.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 
 class EditMenu extends StatefulWidget {
-  const EditMenu({super.key, required this.weekDay});
+  const EditMenu({super.key, required this.weekDay, required this.apiUrl});
 
   final WeekDay weekDay;
-
+  final String apiUrl;
   @override
   State<EditMenu> createState() => _EditMenuState();
 }
@@ -40,6 +39,16 @@ class _EditMenuState extends State<EditMenu> {
   Menu? pastMenu;
 
   bool _update = false;
+
+  Future<http.Response> updateWeekDay(WeekDay weekDay) {
+    print(widget.apiUrl);
+    var response = http.post(Uri.parse('http://192.168.1.86:8080/menu'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(weekDay.update?.toJson()));
+    return response;
+  }
 
   @override
   void initState() {
@@ -245,22 +254,22 @@ class _EditMenuState extends State<EditMenu> {
         ),
       );
       return;
-    } else {
-      var location = Location();
-      location.changeSettings(accuracy: LocationAccuracy.high);
-      var locationData = await location.getLocation();
-      if (!(locationData.latitude! > 40.191699 &&
-          locationData.latitude! < 40.193067 &&
-          locationData.longitude! > -8.413346 &&
-          locationData.longitude! < -8.410406)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                "Não se encontra no isec, então não pode fazer atualizações!"),
-          ),
-        );
-        return;
-      }
+      // } else {
+      //   var location = Location();
+      //   location.changeSettings(accuracy: LocationAccuracy.high);
+      //   var locationData = await location.getLocation();
+      //   if (!(locationData.latitude! > 40.191699 &&
+      //       locationData.latitude! < 40.193067 &&
+      //       locationData.longitude! > -8.413346 &&
+      //       locationData.longitude! < -8.410406)) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       const SnackBar(
+      //         content: Text(
+      //             "Não se encontra no isec, então não pode fazer atualizações!"),
+      //       ),
+      //     );
+      //     return;
+      //   }
     }
 
     if (pastMenu == menuUpdate) {
