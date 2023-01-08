@@ -201,6 +201,12 @@ class _HomePageState extends State<HomePage> {
                                                           fit: BoxFit.fitWidth,
                                                           width: 100,
                                                           height: 150,
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
+                                                            return Text(
+                                                                "Erro a carregar imagem!");
+                                                          },
                                                         ),
                                                       ),
                                                     ),
@@ -270,9 +276,17 @@ class _HomePageState extends State<HomePage> {
                                 });
                               });
                         } else if (snapshot.hasError) {
-                          print("Snapshot error ${snapshot.error}");
-                          return const Text(
-                              'Não há dados armazenados para mostrar, atualize os dados pelo servidor!');
+                          if (snapshot.error.toString() ==
+                              "Connection refused") {
+                            return Center(
+                              child: Text('Impossível ligar ao servidor!'),
+                            );
+                          } else {
+                            return Center(
+                              child: Text(
+                                  "Não tem dados armazenados para mostrar!"),
+                            );
+                          }
                         }
                       }
                       return const CircularProgressIndicator();
