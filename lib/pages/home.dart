@@ -148,129 +148,134 @@ class _HomePageState extends State<HomePage> {
                     future: _weekDays,
                     builder: (BuildContext context,
                         AsyncSnapshot<List<WeekDay>> snapshot) {
-                      if (snapshot.hasData) {
-                        var textColor = snapshot.data![index].update == null
-                            ? Colors.black
-                            : Colors.green;
-                        return GestureDetector(
-                            child: Card(
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width -
-                                        (MediaQuery.of(context).size.width / 3),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            Strings.getWeekDay(
-                                                snapshot.data![index].weekDay),
-                                            style: TextStyle(
-                                                color: textColor, fontSize: 25),
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasData) {
+                          var textColor = snapshot.data![index].update == null
+                              ? Colors.black
+                              : Colors.green;
+                          return GestureDetector(
+                              child: Card(
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width -
+                                          (MediaQuery.of(context).size.width /
+                                              3),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              Strings.getWeekDay(snapshot
+                                                  .data![index].weekDay),
+                                              style: TextStyle(
+                                                  color: textColor,
+                                                  fontSize: 25),
+                                            ),
                                           ),
-                                        ),
-                                        Expanded(
-                                          child: GestureDetector(
-                                            child: snapshot.data![index].update
-                                                        ?.img ==
-                                                    null
-                                                ? const Padding(
-                                                    padding:
-                                                        EdgeInsets.all(8.0),
-                                                    child: SizedBox(
-                                                      width: 100,
-                                                      height: 150,
-                                                    ),
-                                                  )
-                                                : Hero(
-                                                    tag: "photo",
-                                                    child: Padding(
+                                          Expanded(
+                                            child: GestureDetector(
+                                              child: snapshot.data![index]
+                                                          .update?.img ==
+                                                      null
+                                                  ? const Padding(
                                                       padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Image.network(
-                                                        "$apiUrl/images/${snapshot.data![index].update!.img!}",
-                                                        fit: BoxFit.fitWidth,
+                                                          EdgeInsets.all(8.0),
+                                                      child: SizedBox(
                                                         width: 100,
                                                         height: 150,
                                                       ),
+                                                    )
+                                                  : Hero(
+                                                      tag: "photo",
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Image.network(
+                                                          "$apiUrl/images/${snapshot.data![index].update!.img!}",
+                                                          fit: BoxFit.fitWidth,
+                                                          width: 100,
+                                                          height: 150,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                            onTap: () async {
-                                              if (snapshot.data![index].update
-                                                      ?.img !=
-                                                  null) {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            PreviewPage(
-                                                              picture:
-                                                                  "$apiUrl/images/${snapshot.data![index].update!.img!}",
-                                                              title: snapshot
-                                                                  .data![index]
-                                                                  .weekDay,
-                                                            )));
-                                              }
-                                            },
-                                          ),
-                                        )
-                                      ],
+                                              onTap: () async {
+                                                if (snapshot.data![index].update
+                                                        ?.img !=
+                                                    null) {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PreviewPage(
+                                                                picture:
+                                                                    "$apiUrl/images/${snapshot.data![index].update!.img!}",
+                                                                title: snapshot
+                                                                    .data![
+                                                                        index]
+                                                                    .weekDay,
+                                                              )));
+                                                }
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  _menuRow(
-                                      "Sopa",
-                                      snapshot.data![index].update?.soup ??
-                                          snapshot.data![index].original.soup,
-                                      textColor),
-                                  _menuRow(
-                                      "Carne",
-                                      snapshot.data![index].update?.meat ??
-                                          snapshot.data![index].original.meat,
-                                      textColor),
-                                  _menuRow(
-                                      "Peixe",
-                                      snapshot.data![index].update?.fish ??
-                                          snapshot.data![index].original.fish,
-                                      textColor),
-                                  _menuRow(
-                                      "Vegetariano",
-                                      snapshot.data![index].update
-                                              ?.vegetarian ??
-                                          snapshot
-                                              .data![index].original.vegetarian,
-                                      textColor),
-                                  _menuRow(
-                                      "Sobremesa",
-                                      snapshot.data![index].update?.desert ??
-                                          snapshot.data![index].original.desert,
-                                      textColor),
-                                ],
+                                    _menuRow(
+                                        "Sopa",
+                                        snapshot.data![index].update?.soup ??
+                                            snapshot.data![index].original.soup,
+                                        textColor),
+                                    _menuRow(
+                                        "Carne",
+                                        snapshot.data![index].update?.meat ??
+                                            snapshot.data![index].original.meat,
+                                        textColor),
+                                    _menuRow(
+                                        "Peixe",
+                                        snapshot.data![index].update?.fish ??
+                                            snapshot.data![index].original.fish,
+                                        textColor),
+                                    _menuRow(
+                                        "Vegetariano",
+                                        snapshot.data![index].update
+                                                ?.vegetarian ??
+                                            snapshot.data![index].original
+                                                .vegetarian,
+                                        textColor),
+                                    _menuRow(
+                                        "Sobremesa",
+                                        snapshot.data![index].update?.desert ??
+                                            snapshot
+                                                .data![index].original.desert,
+                                        textColor),
+                                  ],
+                                ),
                               ),
-                            ),
-                            onTap: () async {
-                              await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EditMenu(
-                                          weekDay: snapshot.data![index],
-                                          apiUrl: apiUrl)));
-                              setState(() {
-                                _weekDays = _fetchWeekDays();
+                              onTap: () async {
+                                await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditMenu(
+                                            weekDay: snapshot.data![index],
+                                            apiUrl: apiUrl)));
+                                setState(() {
+                                  _weekDays = _fetchWeekDays();
+                                });
                               });
-                            });
-                      } else if (snapshot.hasError) {
-                        print("Snapshot error ${snapshot.error}");
-                        return const Text(
-                            'Não há dados armazenados para mostrar, atualize os dados pelo servidor!');
-                      } else {
-                        return const CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          print("Snapshot error ${snapshot.error}");
+                          return const Text(
+                              'Não há dados armazenados para mostrar, atualize os dados pelo servidor!');
+                        }
                       }
+                      return const CircularProgressIndicator();
                     },
                   ),
                 ),
